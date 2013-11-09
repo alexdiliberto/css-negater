@@ -18,6 +18,13 @@ $('#parse').on('submit', function(e) {
   this.target = "output"+target;
   // FIXME: invert the append order (prepend).
   $('<iframe id="output'+target+'" name="output'+target+'"></iframe>').appendTo('body');
+  var options = $('input[type=checkbox]');
+  var optionsArray = new Array(options.length);
+  var optionsBinaryMask;
+  options.each(function(index, checkbox) {
+    optionsArray[index] = +checkbox.checked;
+  });
+  $('#options').val(parseInt(optionsArray.join(""), 2));
 });
 
 // TODO: Store and provide a way to share the generated negation CSS?
