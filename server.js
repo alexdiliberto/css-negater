@@ -6,22 +6,43 @@ var connect = require('connect'),
     path = require('path'),
     fs = require('fs');
 
+var isProduction = (process.env.NODE_ENV === 'production'),
+    port = (isProduction ? 80 : 8000);
+
+// REAL CODE GOES HERE
+// Define your routes as members of the routes object.
+var routes = {
+  "/parse": function(req, res, next) {
+    // TODO: Make this load a page, grab all CSS, parse it, take into consideration configuration, and return the output.
+    res.end("do stuff");
+  },
+  "404": function(req, res, next) {
+    fs.readFile(path.join(__dirname,'public','404.html'), function (err, html) {
+      res.writeHead(404, {'Content-Type': 'text/html'});
+      res.end(html);
+    });
+  }
+};
+
+// Connect's boilerplate.
 var app = connect()
   .use(connect.favicon(path.join(__dirname,'public','favicon.ico')))
   .use(connect.logger('dev'))
   .use(connect.static(path.join(__dirname,'public')))
 
-  // When all else fails, 404
-  .use(function(req, res) {
-    fs.readFile(path.join(__dirname,'public','404.html'), function (err, html) {
-      res.writeHead(404, {'Content-Type': 'text/html'});
-      res.end(html);
-    });
+  // Looks up pages in our routes object.
+  .use(function(req, res, next) {
+
+    var pathname = connect.utils.parseUrl(req).pathname;
+    if (routes[pathname]) {
+      routes[pathname](req, res, next);
+    // When all else fails, 404
+    } else {
+      routes["404"](req, res, next);
+    }
   });
 
-var isProduction = (process.env.NODE_ENV === 'production');
-var port = (isProduction ? 80 : 8000);
-
+// HTTP Server boilerplate.
 http
   .createServer(app)
   .listen(port, function(err) {
