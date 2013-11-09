@@ -12,6 +12,19 @@ var isProduction = (process.env.NODE_ENV === 'production'),
     hostname = isProduction ? 'http://ally.2013.nodeknockout.com' : 'http://localhost:8000',
     port = (isProduction ? 80 : 8000);
 
+var optsBinaryLength = 2,
+  opts = [
+  {
+    key: "display-none",
+    set: false,
+    value: "Don't reset display: none;"
+  }, {
+    key: "visibility-hidden",
+    set: false,
+    value: "Don't reset visibility: hidden;"
+  }
+];
+
 // Template handling using ES6 proxies for a magic-method-alike approach.
 var templates = (function() {
   var templatepath = path.join(__dirname,'public','templates');
@@ -35,7 +48,21 @@ var templates = (function() {
 
 // TODO: Make this load the URL, grab all CSS, parse it, take into consideration configuration, and return the output.
 function parse(url, options) {
-  return "Parsed CSS content. Options= " + options;
+  return "Parsed CSS content.";
+}
+
+function parseBitmask(options) {
+  if (!options) return undefined;
+
+  for (var i = 0; i < optsBinaryLength; i++) {
+    opts[i].set = bitTest(options, i);
+  }
+
+  return opts;
+}
+
+function bitTest(num, bit) {
+    return ((num>>bit) % 2 !== 0);
 }
 
 // Define your routes as members of the routes object.
@@ -71,7 +98,7 @@ var routes = {
       previousURLs = previousURLs.filter(function (value, index, self) { return self.indexOf(value) === index; });
     }
 
-    var parsed = parse(negateurl, options);
+    var parsed = parse(negateurl, parseBitmask(options));
 
     // TODO: Include options mapped over their information in this.
     // TODO: Parse the page title out of the provided URL.
