@@ -34,6 +34,19 @@
             <input type="submit" value="Negate!" />
         </div></form>
 
+        <h2>Bookmarklet!</h2>
+        <!--
+        <script>
+            (function() {
+                var elem = document.createElement('link');
+                elem.rel = 'stylesheet';
+                elem.href = 'http://ally.2013.nodeknockout.com/parse.css?url='+encodeURIComponent(location.href);
+                document.body.appendChild(elem);
+            })();
+        </script>
+        -->
+        <a href="javascript:(function(){var a=document.createElement('link');a.rel='stylesheet';a.href='http://ally.2013.nodeknockout.com/parse.css?url='+encodeURIComponent(location.href);document.body.appendChild(a)})();">One click negation!</a>
+
         <noscript><iframe id="output" name="output"></iframe></noscript>
 
         <div id="iframe-target"></div>

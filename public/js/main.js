@@ -24,5 +24,3 @@ $('#parse').on('submit', function(e) {
   });
   $('#options').val(parseInt(optionsArray.join(""), 2));
 });
-
-// TODO: Create a bookmarklet that will allow you to embed the negation CSS?
