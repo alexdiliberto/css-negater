@@ -2,15 +2,20 @@
 require('nko')('Dv-pUjLBGTI4IxU3');
 
 var connect = require('connect'),
-    http = require('http');
+    http = require('http'),
+    fs = require('fs');
 
 var app = connect()
   .use(connect.favicon('public/favicon.ico'))
   .use(connect.logger('dev'))
   .use(connect.static('public'))
-  .use(function(req, res){
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    res.end('<html><body>Hello from Connect!</body></html>\n');
+
+  // When all else fails, 404
+  .use(function(req, res) {
+    fs.readFile('public/404.html', function (err, html) {
+      res.writeHead(404, {'Content-Type': 'text/html'});
+      res.end(html);
+    });
   });
 
 var isProduction = (process.env.NODE_ENV === 'production');
