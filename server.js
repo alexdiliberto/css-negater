@@ -75,7 +75,8 @@ var routes = {
     var parsed = parse(negateurl, options);
 
     // TODO: Include options mapped over their information in this.
-    res.end(templates.negate({url: negateurl, output: parsed}));
+    // TODO: Parse the page title out of the provided URL.
+    res.end(templates.negate({title: 'negated page title', url: negateurl, output: parsed}));
   },
   "400": function(req, res, next) {
     fs.readFile(path.join(__dirname,'public','400.html'), function (err, html) {

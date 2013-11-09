@@ -1,5 +1,6 @@
 var target = 0;
 
+// Re-present the list of negated URLs to the user.
 $(function() {
 	var sources = [];
 	if (/previous=([^&]*)/.test(document.cookie)) {
@@ -25,6 +26,4 @@ $('#parse').on('submit', function(e) {
   $('#options').val(parseInt(optionsArray.join(""), 2));
 });
 
-// TODO: Store and provide a way to share the generated negation CSS?
 // TODO: Create a bookmarklet that will allow you to embed the negation CSS?
-// TODO: Capture the list of negated CSS URLs per user and re-present them to the user.
