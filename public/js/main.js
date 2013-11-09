@@ -7,7 +7,7 @@ $(function() {
 		sources = document.cookie.match(/previous=([^&]*)/)[1].split('~~~');
 	}
 	for (var i = 0; i < sources.length; i++) {
-		$('<iframe src="'+unescape(sources[i])+'&exclude=1"></iframe>').appendTo('body');
+		$('<iframe src="'+unescape(sources[i])+'&exclude=1"></iframe>').appendTo('#iframe-target');
 	}
 });
 
@@ -16,8 +16,7 @@ $('#parse').on('submit', function(e) {
   var url = $('#url').val();
   target++;
   this.target = "output"+target;
-  // FIXME: invert the append order (prepend).
-  $('<iframe id="output'+target+'" name="output'+target+'"></iframe>').appendTo('body');
+  $('<iframe id="output'+target+'" name="output'+target+'"></iframe>').prependTo('#iframe-target');
   var options = $('input[type=checkbox]');
   var optionsArray = new Array(options.length);
   options.each(function(index, checkbox) {
