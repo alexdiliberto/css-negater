@@ -29,10 +29,11 @@
         <h2>Let's do it!</h2>
         <form id="parse" action="parse.html" method="get" target="output"><div>
             <label for="url">Page to negate: <input type="url" name="url" id="url" placeholder="eg. http://www.google.com" /></label>
+
             <!-- TODO: Identify other reasonable options. -->
             <ul>
-                <li><label for="displaynone"><input type="checkbox" id="displaynone" /> Don't reset display: none;</label></li>
-                <li><label for="visibilityhidden"><input type="checkbox" id="visibilityhidden" /> Don't reset visibility: hidden;</label></li>
+                <li><label for="displaynone"><input type="checkbox" id="displaynone"/> Don't reset display: none;</label></li>
+                <li><label for="visibilityhidden"><input type="checkbox" id="visibilityhidden"/> Don't reset visibility: hidden;</label></li>
             </ul>
             <input type="hidden" id="options" name ="options" />
             <input type="submit" value="Negate!" />

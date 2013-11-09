@@ -22,7 +22,7 @@ var templates = (function() {
 
       var templatecontents = fs.existsSync(path.join(templatepath,template+'.hbs')) ?
         fs.readFileSync(path.join(templatepath,template+'.hbs'), 'utf8') : "Error";
-      
+
       cache[template] = handlebars.compile(templatecontents);
       return cache[template];
     }
@@ -33,7 +33,7 @@ var templates = (function() {
 
 // TODO: Make this load the URL, grab all CSS, parse it, take into consideration configuration, and return the output.
 function parse(url, options) {
-  return "Parsed CSS content.";
+  return "Parsed CSS content. Options= " + options;
 }
 
 // Define your routes as members of the routes object.
@@ -51,12 +51,12 @@ var routes = {
       routes["400"](req, res, next);
       return;
     }
-    
+
     // TODO: Implement bitmasking for options.
     // var options = parseBitmask(req.query.options);
 
     res.writeHead(200, {'Content-Type': 'text/html'});
-    var parsed = parse(url, options)
+    var parsed = parse(url, options);
 
     // TODO: Include options mapped over their information in this.
     res.end(templates.negate({url: url, output: parsed}));
@@ -94,7 +94,7 @@ var app = connect()
   })
 
   // Lookup the route.
-  .use(function(req, res, next) {    
+  .use(function(req, res, next) {
     var route = connect.utils.parseUrl(req).pathname.substring(1).replace(/\.[^.]+$/,'');
 
     if (routes[route]) {
