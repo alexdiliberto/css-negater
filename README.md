@@ -28,6 +28,11 @@ ssh root@ally.2013.nodeknockout.com
 # or, if you get prompted for a password
 ssh -i ./id_deploy deploy@ally.2013.nodeknockout.com
 ssh -i ./id_deploy root@ally.2013.nodeknockout.com
+
+# As root
+vim /etc/service/serverjs/run
+
+# Add the --harmony_proxies flag to the run script.
 ~~~
 
 Read more about this setup [on our blog][deploying-nko].
