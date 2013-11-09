@@ -8,9 +8,6 @@ var app = connect()
   .use(connect.favicon('public/favicon.ico'))
   .use(connect.logger('dev'))
   .use(connect.static('public'))
-  .use(connect.directory('public'))
-  .use(connect.cookieParser())
-  .use(connect.session({ secret: 'my secret here' }))
   .use(function(req, res){
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.end('<html><body>Hello from Connect!</body></html>\n');
