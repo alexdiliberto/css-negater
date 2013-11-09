@@ -2,7 +2,8 @@
 
 ~~~sh
 # getting the code
-git clone git@github.com:nko4/ally.git && cd ./ally/
+cd ~/Repos
+git clone git@github.com:nko4/ally.git nko4 && cd ./nko4/
 
 # developing
 npm install
