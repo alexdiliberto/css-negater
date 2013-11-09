@@ -1,29 +1,62 @@
-<!-- TODO: Use the page's title instead of the URL. -->
-<h1>{{title}}</h1>
-<h2>{{url}}</h2>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>CSS Negater</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<!-- TODO: Describe the options selected. -->
-{{#if options}}
-<ul>
-	{{#each options}}
-	<li>{{this}}</li>
-	{{/each}}
-</ul>
-{{/if}}
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="codemirror/lib/codemirror.css">
+    </head>
+    <body>
+        <!--[if lte IE 8]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <!-- TODO: Use the page's title instead of the URL. -->
+        <h1>{{title}}</h1>
+        <h2>{{url}}</h2>
 
-<!-- TODO: Display the generated CSS in CodeMirror? -->
-{{output}}
+        <!-- TODO: Describe the options selected. -->
+        {{#if options}}
+        <h2>Options</h2>
+            <ul>
+            {{#each options}}
+                <li>{{this}}</li>
+            {{/each}}
+            </ul>
+        {{/if}}
 
-<!-- Make "Copy" buttons work. -->
-<label for="link">This page: <input id="link" type="text" value="{{thispage}}" /></label><button>Copy</button>
-<label for="css">CSS URL: <input id="css" type="text" value="{{cssurl}}" /></label><button>Copy</button>
+        <!-- Display the output in a CodeMirror instance. -->
+        <h2>Output</h2>
+        <textarea id="output">{{output}}</textarea>
 
-<script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+        <!-- CodeMirror inclusion. -->
+        <script src="codemirror/lib/codemirror.js"></script>
+        <script src="codemirror/mode/css/css.js"></script>
+        <script>
+        var editor = CodeMirror.fromTextArea(document.getElementById('output'), {
+            lineNumbers: true,
+            mode: "text/css"
+        });
+        </script>
 
-    ga('create', 'UA-45577439-1', 'nodeknockout.com');
-    ga('send', 'pageview');
-</script>
+        <!-- TODO: Make "Copy" buttons work. -->
+        <!-- TODO: Make "Download" button work. -->
+        <h2>Use It!</h2>
+        <button>Copy to Clipboard</button><button>Download File</button>
+        <label for="link">This page: <input id="link" type="text" value="{{thispage}}" /></label><button>Copy</button>
+        <label for="css">CSS URL: <input id="css" type="text" value="{{cssurl}}" /></label><button>Copy</button>
+
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-45577439-1', 'nodeknockout.com');
+            ga('send', 'pageview');
+        </script>
+    </body>
+</html>
