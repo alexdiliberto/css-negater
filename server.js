@@ -5,6 +5,7 @@ var connect = require('connect'),
     http = require('http'),
     path = require('path'),
     fs = require('fs'),
+    querystring = require('querystring'),
     handlebars = require('handlebars');
 
 var isProduction = (process.env.NODE_ENV === 'production'),
@@ -39,7 +40,7 @@ function parse(url, options) {
 // Define your routes as members of the routes object.
 var routes = {
   "parse": function(req, res, next) {
-    var url = req.query.url || undefined;
+    var negateurl = req.query.url || undefined;
     var contenttype = req.acceptType || "html";
     var options = req.query.options || undefined;
 
@@ -47,7 +48,7 @@ var routes = {
 
     // http://docs.jquery.com/Plugins/Validation/Methods/url
     // From Scott Gonzalez: http://projects.scottsplayground.com/iri/
-    if (!/^(https?):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(url)) {
+    if (!/^(https?):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(negateurl)) {
       routes["400"](req, res, next);
       return;
     }
@@ -55,11 +56,26 @@ var routes = {
     // TODO: Implement bitmasking for options.
     // var options = parseBitmask(req.query.options);
 
-    res.writeHead(200, {'Content-Type': 'text/html'});
-    var parsed = parse(url, options)
+    // Handle previously submitted URLs.
+    var previousURLs = [];
+    if (req.cookies.previous) {
+      previousURLs = req.cookies.previous.split('~~~');
+      previousURLs = previousURLs.map(function(elem) { return querystring.escape(elem); });
+    }
+
+    // Only unshift this request if it isn't being repopulated.
+    if (req.query.exclude !== '1') {
+      previousURLs.unshift(querystring.escape(querystring.unescape(req.url)));
+      previousURLs = previousURLs.filter(function (value, index, self) { return self.indexOf(value) === index; });
+    }
+
+    res.statusCode = 200;
+    res.setHeader('Set-Cookie', 'previous='+previousURLs.join('~~~'));
+    res.setHeader('Content-Type', 'text/html');
+    var parsed = parse(negateurl, options)
 
     // TODO: Include options mapped over their information in this.
-    res.end(templates.negate({url: url, output: parsed}));
+    res.end(templates.negate({url: negateurl, output: parsed}));
   },
   "400": function(req, res, next) {
     fs.readFile(path.join(__dirname,'public','400.html'), function (err, html) {
@@ -81,9 +97,6 @@ var app = connect()
   .use(connect.logger('dev'))
   .use(connect.static(path.join(__dirname,'public')))
 
-  // Process the querystring.
-  .use(connect.query())
-
   // Process the extension.
   .use(function(req, res, next) {
     var extension = connect.utils.parseUrl(req).pathname.match(/\.([^.]+)$/);
@@ -92,6 +105,10 @@ var app = connect()
     }
     return next();
   })
+
+  // Process the querystring and cookies.
+  .use(connect.query())
+  .use(connect.cookieParser())
 
   // Lookup the route.
   .use(function(req, res, next) {    
