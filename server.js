@@ -4,17 +4,55 @@ require('nko')('Dv-pUjLBGTI4IxU3');
 var connect = require('connect'),
     http = require('http'),
     path = require('path'),
-    fs = require('fs');
+    fs = require('fs'),
+    handlebars = require('handlebars');
 
 var isProduction = (process.env.NODE_ENV === 'production'),
     port = (isProduction ? 80 : 8000);
 
+// Template handling using ES6 proxies for a magic-method-alike approach.
+var templates = (function() {
+  var templatepath = path.join(__dirname,'public','templates');
+  var cache = {};
+
+  return Proxy.create({
+    get: function(proxy, template) {
+      // Only cache templates in production.
+      if (isProduction && cache[template]) return cache[template];
+
+      var templatecontents = fs.existsSync(path.join(templatepath,template+'.hbs')) ?
+        fs.readFileSync(path.join(templatepath,template+'.hbs'), 'utf8') : "Error";
+      
+      cache[template] = handlebars.compile(templatecontents);
+      return cache[template];
+    }
+  });
+})();
+
 // REAL CODE GOES HERE
+
+// TODO: Make this load the URL, grab all CSS, parse it, take into consideration configuration, and return the output.
+function parse(url, options) {
+  return "Parsed CSS content.";
+}
+
 // Define your routes as members of the routes object.
 var routes = {
-  "/parse": function(req, res, next) {
-    // TODO: Make this load a page, grab all CSS, parse it, take into consideration configuration, and return the output.
-    res.end("Parsed CSS output.");
+  "parse": function(req, res, next) {
+    var url = req.query.url || undefined;
+    var options = req.query.options || undefined;
+    var contenttype = req.acceptType || "html";
+
+    // TODO: Reject on bad URL.
+    // TODO: Reject on contenttype not "html" or "css"
+    // TODO: Implement bitmasking for options.
+    // var options = parseBitmask(req.query.options);
+
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    var parsed = parse(url, options)
+
+    // TODO: Include options mapped over their information in this.
+    res.end(templates.negate({url: url, output: parsed}));
   },
   "404": function(req, res, next) {
     fs.readFile(path.join(__dirname,'public','404.html'), function (err, html) {
@@ -30,12 +68,24 @@ var app = connect()
   .use(connect.logger('dev'))
   .use(connect.static(path.join(__dirname,'public')))
 
-  // Looks up pages in our routes object.
-  .use(function(req, res, next) {
+  // Process the querystring.
+  .use(connect.query())
 
-    var pathname = connect.utils.parseUrl(req).pathname;
-    if (routes[pathname]) {
-      routes[pathname](req, res, next);
+  // Process the extension.
+  .use(function(req, res, next) {
+    var extension = connect.utils.parseUrl(req).pathname.match(/\.([^.]+)$/);
+    if (extension && extension[1]) {
+      req.acceptType = extension[1];
+    }
+    return next();
+  })
+
+  // Lookup the route.
+  .use(function(req, res, next) {    
+    var route = connect.utils.parseUrl(req).pathname.substring(1).replace(/\.[^.]+$/,'');
+
+    if (routes[route]) {
+      routes[route](req, res, next);
     // When all else fails, 404
     } else {
       routes["404"](req, res, next);

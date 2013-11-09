@@ -27,7 +27,7 @@
         <p>The CSS Negater has your back. Completely eliminate all included-by-default CSS with a negation stylesheet.</p>
 
         <h2>Let's do it!</h2>
-        <form id="parse" action="parse" method="get"><div>
+        <form id="parse" action="parse" method="get" target="output"><div>
             <label for="url">Page to negate: <input type="url" name="url" id="url" placeholder="eg. http://www.google.com" /></label>
             <!-- TODO: Identify other reasonable options. -->
             <ul>
@@ -37,10 +37,14 @@
             <input type="submit" value="Negate!" />
         </div></form>
 
-        <textarea id="output" style="display: none;"></textarea>
+        <noscript>
+            <iframe id="output" name="output" seamless />
+        </noscript>
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
+        <!-- TODO: Decide if we need this. -->
+        <script src="js/vendor/handlebars-v1.1.2.js"></script>
         <script src="js/plugins.js"></script>
         <script src="js/main.js"></script>
 

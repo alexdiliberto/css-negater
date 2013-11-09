@@ -4,7 +4,7 @@
   "description": "Ally",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node --harmony-proxies server.js"
   },
   "repository": {
     "type": "git",
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "connect": "2.11.x",
+    "handlebars": "1.1.x",
     "nko": "*"
   },
   "engines": {

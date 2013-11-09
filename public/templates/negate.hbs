@@ -1,0 +1,12 @@
+<h1>{{url}}</h1>
+
+{{#if options}}
+<ul>
+	{{#each options}}
+	<li>{{this}}</li>
+	{{/each}}
+</ul>
+{{/if}}
+
+{{!-- TODO: Embed codemirror? --}}
+{{output}}
