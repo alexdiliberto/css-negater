@@ -11,6 +11,7 @@
     "url": "git@github.com:nko4/ally.git"
   },
   "dependencies": {
+    "connect": "2.11.x",
     "nko": "*"
   },
   "engines": {
