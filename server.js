@@ -40,11 +40,18 @@ function parse(url, options) {
 var routes = {
   "parse": function(req, res, next) {
     var url = req.query.url || undefined;
-    var options = req.query.options || undefined;
     var contenttype = req.acceptType || "html";
+    var options = req.query.options || undefined;
 
-    // TODO: Reject on bad URL.
-    // TODO: Reject on contenttype not "html" or "css"
+    if (contenttype !== "html" && contenttype !== "css") { return next(); }
+
+    // http://docs.jquery.com/Plugins/Validation/Methods/url
+    // From Scott Gonzalez: http://projects.scottsplayground.com/iri/
+    if (!/^(https?):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(url)) {
+      routes["400"](req, res, next);
+      return;
+    }
+    
     // TODO: Implement bitmasking for options.
     // var options = parseBitmask(req.query.options);
 
@@ -53,6 +60,12 @@ var routes = {
 
     // TODO: Include options mapped over their information in this.
     res.end(templates.negate({url: url, output: parsed}));
+  },
+  "400": function(req, res, next) {
+    fs.readFile(path.join(__dirname,'public','400.html'), function (err, html) {
+      res.writeHead(400, {'Content-Type': 'text/html'});
+      res.end(html);
+    });
   },
   "404": function(req, res, next) {
     fs.readFile(path.join(__dirname,'public','404.html'), function (err, html) {
@@ -88,8 +101,13 @@ var app = connect()
       routes[route](req, res, next);
     // When all else fails, 404
     } else {
-      routes["404"](req, res, next);
+      return next();
     }
+  })
+
+  // When all else fails, 404
+  .use(function(req, res, next) {
+    routes["404"](req, res, next);
   });
 
 // HTTP Server boilerplate.
