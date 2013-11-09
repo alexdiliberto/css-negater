@@ -9,6 +9,7 @@ var connect = require('connect'),
     handlebars = require('handlebars');
 
 var isProduction = (process.env.NODE_ENV === 'production'),
+    hostname = isProduction ? 'http://ally.2013.nodeknockout.com' : 'http://localhost:8000',
     port = (isProduction ? 80 : 8000);
 
 // Template handling using ES6 proxies for a magic-method-alike approach.
@@ -40,6 +41,7 @@ function parse(url, options) {
 // Define your routes as members of the routes object.
 var routes = {
   "parse": function(req, res, next) {
+    console.log(req.url);
     var negateurl = req.query.url || undefined;
     var contenttype = req.acceptType || "html";
     var options = req.query.options || undefined;
@@ -65,18 +67,30 @@ var routes = {
 
     // Only unshift this request if it isn't being repopulated.
     if (req.query.exclude !== '1') {
-      previousURLs.unshift(querystring.escape(querystring.unescape(req.url)));
+      previousURLs.unshift(querystring.escape(req.url));
       previousURLs = previousURLs.filter(function (value, index, self) { return self.indexOf(value) === index; });
     }
 
-    res.statusCode = 200;
-    res.setHeader('Set-Cookie', 'previous='+previousURLs.join('~~~'));
-    res.setHeader('Content-Type', 'text/html');
     var parsed = parse(negateurl, options);
 
     // TODO: Include options mapped over their information in this.
     // TODO: Parse the page title out of the provided URL.
-    res.end(templates.negate({title: 'negated page title', url: negateurl, output: parsed}));
+    if (contenttype == 'html') {
+      res.statusCode = 200;
+      res.setHeader('Set-Cookie', 'previous='+previousURLs.join('~~~'));
+      res.setHeader('Content-Type', 'text/'+contenttype);
+      res.end(templates.negate({
+        title: 'negated page title',
+        url: negateurl,
+        thispage: hostname + req.url,
+        cssurl: hostname + req.url.replace('parse.html', 'parse.css').replace('&exclude=1', ''),
+        output: parsed
+      }));
+    } else {
+      res.statusCode = 200;
+      res.setHeader('Content-Type', 'text/css');
+      res.end(parsed);
+    }
   },
   "400": function(req, res, next) {
     fs.readFile(path.join(__dirname,'public','400.html'), function (err, html) {
