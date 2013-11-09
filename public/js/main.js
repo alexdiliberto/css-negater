@@ -8,8 +8,7 @@ $(function() {
 	for (var i = 0; i < sources.length; i++) {
 		$('<iframe src="'+unescape(sources[i])+'&exclude=1"></iframe>').appendTo('body');
 	}
-  
-})
+});
 
 $('#parse').on('submit', function(e) {
   var $this = $(this);
@@ -20,7 +19,6 @@ $('#parse').on('submit', function(e) {
   $('<iframe id="output'+target+'" name="output'+target+'"></iframe>').appendTo('body');
   var options = $('input[type=checkbox]');
   var optionsArray = new Array(options.length);
-  var optionsBinaryMask;
   options.each(function(index, checkbox) {
     optionsArray[index] = +checkbox.checked;
   });

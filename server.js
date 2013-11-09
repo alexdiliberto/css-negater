@@ -72,7 +72,7 @@ var routes = {
     res.statusCode = 200;
     res.setHeader('Set-Cookie', 'previous='+previousURLs.join('~~~'));
     res.setHeader('Content-Type', 'text/html');
-    var parsed = parse(negateurl, options)
+    var parsed = parse(negateurl, options);
 
     // TODO: Include options mapped over their information in this.
     res.end(templates.negate({url: negateurl, output: parsed}));
