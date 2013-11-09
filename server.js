@@ -14,7 +14,7 @@ var isProduction = (process.env.NODE_ENV === 'production'),
 var routes = {
   "/parse": function(req, res, next) {
     // TODO: Make this load a page, grab all CSS, parse it, take into consideration configuration, and return the output.
-    res.end("do stuff");
+    res.end("Parsed CSS output.");
   },
   "404": function(req, res, next) {
     fs.readFile(path.join(__dirname,'public','404.html'), function (err, html) {
