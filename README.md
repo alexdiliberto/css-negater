@@ -1,3 +1,13 @@
+# CSS Negater
+
+CSS parsers to try out, in order:
+
+* https://github.com/tabatkins/css-parser
+* https://github.com/NV/CSSOM
+* http://glazman.org/JSCSSP/
+* https://github.com/visionmedia/css-parse
+* https://github.com/nzakas/parser-lib
+
 ## Quick Start
 
 ~~~sh
