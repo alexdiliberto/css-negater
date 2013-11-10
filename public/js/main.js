@@ -18,6 +18,8 @@ $('#parse').on('submit', function(e) {
   var url = $('#url').val();
   target++;
   this.target = "output"+target;
+  // TODO: Add clear button.
+  // TODO: Add delete button.
   $('<div class="result"><iframe scrolling="no" id="output'+target+'" name="output'+target+'"></iframe></div>').prependTo('#iframe-target');
   var options = $('input[type=checkbox]');
   var optionsArray = new Array(options.length);
@@ -25,4 +27,6 @@ $('#parse').on('submit', function(e) {
     optionsArray[index] = +checkbox.checked;
   });
   $('#options').val(parseInt(optionsArray.join(""), 2));
+
+  // TODO: Scroll to iframe.
 });

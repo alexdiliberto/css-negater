@@ -16,8 +16,7 @@
             <![endif]-->
             <!-- TODO: Improve this copy and replace the image. -->
             <header class="clearfix">
-                <h1>CSS Negater</h1>
-                <iframe src="http://nodeknockout.com/iframe/ally" frameborder=0 scrolling=no allowtransparency=true width=115 height=25></iframe>
+                <h1>CSS Negater <iframe src="http://nodeknockout.com/iframe/ally" frameborder=0 scrolling=no allowtransparency=true width=115 height=25></iframe></h1>
             </header>
             <p>When you wake up in cold sweats in the middle of the night because of this:</p>
             <p><img src="img/typepadcss.jpg" alt="Theming form with just CSS." /></p>
@@ -29,16 +28,16 @@
                 <label for="url">Page to negate: <input type="url" name="url" id="url" placeholder="eg. http://www.google.com" /></label>
 
                 <ul>
-                    <li><label for="displaynone"><input type="checkbox" id="displaynone"/> Don't reset display: none;</label></li>
-                    <li><label for="visibilityhidden"><input type="checkbox" id="visibilityhidden"/> Don't reset visibility: hidden;</label></li>
+                    <li><label for="display-none"><input type="checkbox" id="display-none"/> Don't reset <code>display: none;</code></label></li>
+                    <li><label for="visibility-hidden"><input type="checkbox" id="visibility-hidden"/> Don't reset <code>visibility: hidden;</code></label></li>
                 </ul>
                 <input type="hidden" id="options" name ="options" />
-                <input type="submit" value="Negate!" />
+                <input type="submit" value="Negate CSS!" /> (alternatively, try the bookmarklet: <a href="javascript:(function(){var a=document.createElement('link');a.rel='stylesheet';a.href='http://ally.2013.nodeknockout.com/parse.css?url='+encodeURIComponent(location.href);document.body.appendChild(a)})();">Negate CSS!</a>)
             </div></form>
 
+            <!--
             <h2>Bookmarklet</h2>
             <p>Embed the "Negate CSS" to bookmarklet to quickly remove all styling from the page you're currently visiting.</p>
-            <!--
             <script>
                 (function() {
                     var elem = document.createElement('link');
@@ -48,7 +47,6 @@
                 })();
             </script>
             -->
-            <a href="javascript:(function(){var a=document.createElement('link');a.rel='stylesheet';a.href='http://ally.2013.nodeknockout.com/parse.css?url='+encodeURIComponent(location.href);document.body.appendChild(a)})();">Negate CSS!</a>
 
             <noscript><iframe id="output" name="output"></iframe></noscript>
 

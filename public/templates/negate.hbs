@@ -30,6 +30,20 @@
         {{/if}}
         -->
 
+        <!-- Copy to clipboard links. -->
+        <div class="buttons">
+            <button id="copycss" data-clipboard-target="output">Copy</button>
+            <button><a href="{{cssurl}}" download="negated.css">Download</a></button>
+            <button id="embed" data-clipboard-text='&lt;link rel="stylesheet" href="{{cssurl}}" /&gt;'>Embed</button>
+        </div>
+
+        <script type="text/javascript" src="js/vendor/ZeroClipboard.min.js"></script>
+        <script>
+            ZeroClipboard.setDefaults( { moviePath: 'js/vendor/ZeroClipboard.swf' } );
+            var clip1 = new ZeroClipboard(document.getElementById('copycss'));
+            var clip2 = new ZeroClipboard(document.getElementById('embed'));
+        </script>
+
         <!-- Display the output in a CodeMirror instance. -->
         <textarea id="output">{{output}}</textarea>
         <script src="codemirror/lib/codemirror.js"></script>
@@ -39,19 +53,6 @@
             lineNumbers: true,
             mode: "text/css"
         });
-        </script>
-
-        <h2>Use It!</h2>
-        <button id="copycss" data-clipboard-target="output">Copy to Clipboard</button><a href="{{cssurl}}" download="negated.css">Download File</a>
-        <!--<label for="link">This page: <input id="link" type="text" value="{{thispage}}" /></label><button id="copypageurl" data-clipboard-target="link">Copy</button>-->
-        <label for="css">CSS URL: <input id="css" type="text" value="{{cssurl}}" /></label><button id="copycssurl" data-clipboard-target="css">Copy</button>
-
-        <script type="text/javascript" src="js/vendor/ZeroClipboard.min.js"></script>
-        <script>
-            ZeroClipboard.setDefaults( { moviePath: 'js/vendor/ZeroClipboard.swf' } );
-            var clip1 = new ZeroClipboard(document.getElementById('copycss'));
-            // var clip2 = new ZeroClipboard(document.getElementById('copypageurl'));
-            var clip3 = new ZeroClipboard(document.getElementById('copycssurl'));
         </script>
 
         <script>

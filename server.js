@@ -16,14 +16,13 @@ var isProduction = (process.env.NODE_ENV === 'production'),
     hostname = isProduction ? 'http://ally.2013.nodeknockout.com' : 'http://localhost:8000',
     port = (isProduction ? 80 : 8000);
 
-// TODO: Identify any reasonable options.
 var opts = [
   {
     key: "display-none",
-    value: "Don't reset display: none;"
+    value: "Don't reset 'display: none;'"
   }, {
     key: "visibility-hidden",
-    value: "Don't reset visibility: hidden;"
+    value: "Don't reset 'visibility: hidden;'"
   }
 ];
 
@@ -56,6 +55,7 @@ function parse(targeturl, options) {
     // FIXME: Stop assuming that the zombie recovers.
     browser.visit(targeturl).fin(function() {
       resolve({
+        targeturl: targeturl,
         options: options,
         browser: browser
       });
@@ -95,24 +95,36 @@ function parse(targeturl, options) {
     });
 
     return RSVP.hash({
+      targeturl: previous.targeturl,
+      options: previous.options,
       title: browser.text('title'),
-      options: options,
       stylesheets: RSVP.all(stylesheets)
     });
   }).then(function(previous) {
     var options = previous.options;
 
-    // TODO: Print the list of options in a comment at the top of the output.
     // TODO: Parse all of the CSS.
-    // TODO: Calculate the CSS needed to negate their CSS, taking into consideration the configuration.
+    // TODO: Calculate the CSS needed to negate their CSS, taking into consideration the options.
+
+    var preamble = "";
+    var parsedcss = "";
+
+    var keyOptions = options.map(function(elem) { return elem.key; });
+    var englishOptions = options.map(function(elem) { return elem.value; });
+
+    preamble =  "/*\r\n";
+    preamble += "URL: " + previous.targeturl + "\r\n\r\n";
+    preamble += "Options:\r\n- " + englishOptions.join("\r\n- ");
+    preamble += "\r\n*/";
 
     previous.stylesheets.forEach(function(stylesheet) {
     });
 
     return RSVP.hash({
+      targeturl: previous.targeturl,
       title: previous.title,
       options: previous.options,
-      parsedcss: 'fixme'
+      parsedcss: preamble + parsedcss
     });
   });
 }

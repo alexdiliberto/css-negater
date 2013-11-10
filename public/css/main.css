@@ -97,19 +97,21 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
-/* TODO: Make this look good. */
 .container { width: 960px; margin: 0 auto; }
 
-header h1 { float: left; }
-header iframe { float: right; }
+.container ul { list-style: none; padding-left: 0; }
 
-.result { margin: 10px 0; padding: 10px; }
-.result iframe { display: block; width: 100%; height: 200px; overflow: hidden; background: transparent; border: none; }
+header h1 { }
+header iframe { display: inline-block; }
 
-.outputpage h1 {}
-.outputpage h1 span { font-size: .5em; }
+.result { margin: 10px 0; border-top: 1px solid #000; }
+.result iframe { display: block; width: 100%; height: 145px; overflow: hidden; background: transparent; border: none; }
 
+.outputpage h1 { font-size: 1.17em; margin: 0; height: 45px; line-height: 45px; }
+.outputpage h1 span { font-size: .85em; }
 
+.outputpage .buttons { float: right; width: 100px; }
+.outputpage .buttons button { display: block; width: 100%; height: 30px; }
 
 
 
