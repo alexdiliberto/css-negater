@@ -102,6 +102,7 @@ function parse(targeturl, options) {
     });
   }).then(function(previous) {
     var options = previous.options;
+    var stylesheets = previous.stylesheets;
 
     // TODO: Parse all of the CSS.
     // TODO: Calculate the CSS needed to negate their CSS, taking into consideration the options.
@@ -117,9 +118,10 @@ function parse(targeturl, options) {
     preamble =  "/*\r\n";
     preamble += "URL: " + previous.targeturl;
     if (options.length) preamble += "\r\n\r\nOptions:\r\n- " + englishOptions.join("\r\n- ");
-    preamble += "\r\n*/";
+    preamble += "\r\n*/\r\n";
 
-    previous.stylesheets.forEach(function(stylesheet) {
+    stylesheets.forEach(function(stylesheet) {
+      parsedcss += stylesheet.body+"\r\n";
     });
 
     return RSVP.hash({
