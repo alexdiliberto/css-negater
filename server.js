@@ -122,6 +122,7 @@ function parse(targeturl, options) {
       var interim = css.parse(stylesheet.body);
       interim.stylesheet.rules = interim.stylesheet.rules.map(function(rule) {
         rule.declarations = rule.declarations.map(function(declaration) {
+          // TODO: Properly set media queries.
           // TODO: Calculate the CSS needed to negate their CSS, taking into consideration the options.
           declaration.value = "inherit";
           return declaration;
