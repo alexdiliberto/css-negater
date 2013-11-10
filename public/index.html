@@ -29,8 +29,8 @@
                     <li><label for="display-none"><input type="checkbox" id="display-none"/> Don't reset <code>display: none;</code></label></li>
                     <li><label for="visibility-hidden"><input type="checkbox" id="visibility-hidden"/> Don't reset <code>visibility: hidden;</code></label></li>
                 </ul>
-                <input type="hidden" id="options" name ="options" />
-                <input type="submit" value="Negate CSS!" /> (alternatively, try the bookmarklet: <a href="javascript:(function(){var a=document.createElement('link');a.rel='stylesheet';a.href='http://ally.2013.nodeknockout.com/parse.css?url='+encodeURIComponent(location.href);document.body.appendChild(a)})();">Negate CSS!</a>)
+                <input type="hidden" id="options" name ="options" value="0"/>
+                <input type="submit" value="Negate CSS!" /> (alternatively, try the bookmarklet: <a href="javascript:(function(){var a=document.createElement('link');a.rel='stylesheet';a.href='http://ally.2013.nodeknockout.com/parse.css?url='+encodeURIComponent(location.href)+'&amp;options=0';document.body.appendChild(a)})();">Negate CSS!</a>)
             </div></form>
 
             <!--
@@ -40,7 +40,7 @@
                 (function() {
                     var elem = document.createElement('link');
                     elem.rel = 'stylesheet';
-                    elem.href = 'http://ally.2013.nodeknockout.com/parse.css?url='+encodeURIComponent(location.href);
+                    elem.href = 'http://ally.2013.nodeknockout.com/parse.css?url='+encodeURIComponent(location.href)+'&amp;options=0';
                     document.body.appendChild(elem);
                 })();
             </script>
