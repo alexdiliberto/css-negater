@@ -80,6 +80,7 @@ function parse(targeturl, options) {
           request(url.resolve(browser.location.href, stylesheet.href), function (error, res, body) {
             if (error) { reject(error); }
 
+            result.location = url.resolve(browser.location.href, stylesheet.href);
             result.media = !!stylesheet.media ? stylesheet.media : undefined;
             result.body = body;
             resolve(result);
@@ -88,6 +89,7 @@ function parse(targeturl, options) {
       } else {
         // Snag all of the CSS that was included locally, wrpa it in a promise for safekeeping.
         return new RSVP.Promise(function(resolve, reject) {
+          result.location = "Inline style block.";
           result.media = undefined;
           result.body = stylesheet.innerHTML;
           resolve(result);
@@ -121,27 +123,34 @@ function parse(targeturl, options) {
     preamble += "\r\n*/\r\n";
 
     stylesheets.forEach(function(stylesheet) {
-      var interim = css.parse(stylesheet.body);
-      interim.stylesheet.rules = interim.stylesheet.rules.map(function(rule) {
-        rule.declarations = rule.declarations.map(function(declaration) {
-          // TODO: Properly set media queries.
-          // TODO: Calculate the minimum CSS needed to negate their CSS.
+      try {
+        var interim = css.parse(stylesheet.body);
+        interim.stylesheet.rules = interim.stylesheet.rules.map(function(rule) {
+          if (rule.type === 'rule') {
+            rule.declarations = rule.declarations.map(function(declaration) {
+              // TODO: Properly set media queries.
+              // TODO: Calculate the minimum CSS needed to negate their CSS.
 
-          if (keyOptions.length && (
-              (~keyOptions.indexOf('display-none') && declaration.property == 'display' && declaration.value == 'none') || 
-              (~keyOptions.indexOf('visibility-hidden') && declaration.property == 'visibility' && declaration.value == 'hidden')
-          )) {
-            console.log('Skipping declaration.');
-          } else {
-            declaration.value = "inherit";
-          };
+              if (keyOptions.length && (
+                  (~keyOptions.indexOf('display-none') && declaration.property == 'display' && declaration.value == 'none') || 
+                  (~keyOptions.indexOf('visibility-hidden') && declaration.property == 'visibility' && declaration.value == 'hidden')
+              )) {
+                console.log('Skipping declaration.');
+              } else {
+                declaration.value = "inherit";
+              };
 
-          return declaration;
+              return declaration;
+            });
+          }
+          return rule;
         });
-        return rule;
-      });
 
-      parsedcss += css.stringify(interim, { compress: true })+"\r\n";
+        parsedcss += css.stringify(interim, { compress: true })+"\r\n";
+      } catch(e) {
+        parsedcss += "/* Error parsing CSS: "+stylesheet.location+" */\r\n";
+      }
+      console.log(stylesheet.location);
     });
 
     return RSVP.hash({
