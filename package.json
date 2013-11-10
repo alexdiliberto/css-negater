@@ -13,6 +13,9 @@
   "dependencies": {
     "connect": "2.11.x",
     "handlebars": "1.1.x",
+    "rsvp": "2.0.*",
+    "request": "2.27.*",
+    "zombie": "2.0.0-alpha24",
     "nko": "*"
   },
   "engines": {

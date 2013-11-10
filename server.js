@@ -6,7 +6,10 @@ var connect = require('connect'),
     path = require('path'),
     fs = require('fs'),
     querystring = require('querystring'),
-    handlebars = require('handlebars');
+    handlebars = require('handlebars'),
+    request = require('request'),
+    zombie = require('zombie'),
+    RSVP = require('rsvp');
 
 var isProduction = (process.env.NODE_ENV === 'production'),
     hostname = isProduction ? 'http://ally.2013.nodeknockout.com' : 'http://localhost:8000',
@@ -44,8 +47,46 @@ var templates = (function() {
 
 // REAL CODE GOES HERE
 
-// TODO: Make this load the URL, grab all CSS, parse it, take into consideration configuration, and return the output.
-function parse(url, options) {
+function fetch(url) {
+  return new RSVP.promise(function(resolve, reject) {
+    request(url, function (error, res, body) {
+      if (error) reject(error);
+
+      res.body = body;
+      resolve(res);
+    });
+  });
+}
+
+function parse(targeturl, options) {
+
+  var browser = new zombie();
+
+  browser.visit(targeturl)
+  .fin(function() {
+    // FIXME: Stop assuming that the zombie recovers.
+  
+    // Get the document title.
+    var title = browser.text("title");
+
+    // Find every <link rel="stylesheet"> and <style> block, queue them in order.
+    var stylesheets = browser.queryAll("link[rel=stylesheet],style");
+    
+    stylesheets.forEach(function(stylesheet) {
+
+      if (stylesheet.tagName.toLowerCase() == 'link') {
+         console.log(stylesheet.href + stylesheet.media);
+      } else {
+        console.log(stylesheet.innerHTML);
+      }
+    });
+  });
+
+
+  // TODO: Request all of the CSS that was included remotely.
+  // TODO: Parse all of the CSS.
+  // TODO: Calculate the CSS needed to negate their CSS, taking into consideration the configuration.
+  // TODO: Print the list of options in a comment at the top of the output.
   return "Parsed CSS content.";
 }
 
@@ -64,14 +105,13 @@ function parseBitmask(options) {
 }
 
 function bitTest(num, bit) {
-    return ((num>>bit) % 2 !== 0);
+  return ((num>>bit) % 2 !== 0);
 }
 
 // Define your routes as members of the routes object.
 var routes = {
   "parse": function(req, res, next) {
-    console.log(req.url);
-    var negateurl = req.query.url || undefined;
+    var targeturl = req.query.url || undefined;
     var contenttype = req.acceptType || "html";
     var options = req.query.options || undefined;
 
@@ -79,7 +119,7 @@ var routes = {
 
     // http://docs.jquery.com/Plugins/Validation/Methods/url
     // From Scott Gonzalez: http://projects.scottsplayground.com/iri/
-    if (!/^(https?):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(negateurl)) {
+    if (!/^(https?):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i.test(targeturl)) {
       routes["400"](req, res, next);
       return;
     }
@@ -98,9 +138,8 @@ var routes = {
     }
 
     var setoptions = parseBitmask(options);
-    var parsed = parse(negateurl, setoptions);
+    var parsed = parse(targeturl, setoptions);
 
-    // TODO: Parse the page title out of the provided URL.
     var title = 'negated page title';
 
     if (contenttype == 'html') {
@@ -109,7 +148,7 @@ var routes = {
       res.setHeader('Content-Type', 'text/'+contenttype);
       res.end(templates.negate({
         title: title,
-        url: negateurl,
+        url: targeturl,
         thispage: hostname + req.url,
         cssurl: hostname + req.url.replace('parse.html', 'parse.css').replace('&exclude=1', ''),
         output: parsed,

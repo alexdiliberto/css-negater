@@ -10,13 +10,16 @@
         <link rel="stylesheet" href="css/main.css">
         <link rel="stylesheet" href="codemirror/lib/codemirror.css">
     </head>
-    <body>
+    <body class="outputpage">
         <!--[if lte IE 8]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-        <h1>{{title}}</h1>
-        <h2>{{url}}</h2>
+        <h1>
+            {{title}}
+            <span>{{url}}</span>
+        </h1>
 
+        <!--
         {{#if options}}
         <h2>Options</h2>
             <ul>
@@ -25,12 +28,10 @@
             {{/each}}
             </ul>
         {{/if}}
+        -->
 
         <!-- Display the output in a CodeMirror instance. -->
-        <h2>Output</h2>
         <textarea id="output">{{output}}</textarea>
-
-        <!-- CodeMirror inclusion. -->
         <script src="codemirror/lib/codemirror.js"></script>
         <script src="codemirror/mode/css/css.js"></script>
         <script>
@@ -42,14 +43,14 @@
 
         <h2>Use It!</h2>
         <button id="copycss" data-clipboard-target="output">Copy to Clipboard</button><a href="{{cssurl}}" download="negated.css">Download File</a>
-        <label for="link">This page: <input id="link" type="text" value="{{thispage}}" /></label><button id="copypageurl" data-clipboard-target="link">Copy</button>
+        <!--<label for="link">This page: <input id="link" type="text" value="{{thispage}}" /></label><button id="copypageurl" data-clipboard-target="link">Copy</button>-->
         <label for="css">CSS URL: <input id="css" type="text" value="{{cssurl}}" /></label><button id="copycssurl" data-clipboard-target="css">Copy</button>
 
         <script type="text/javascript" src="js/vendor/ZeroClipboard.min.js"></script>
         <script>
             ZeroClipboard.setDefaults( { moviePath: 'js/vendor/ZeroClipboard.swf' } );
             var clip1 = new ZeroClipboard(document.getElementById('copycss'));
-            var clip2 = new ZeroClipboard(document.getElementById('copypageurl'));
+            // var clip2 = new ZeroClipboard(document.getElementById('copypageurl'));
             var clip3 = new ZeroClipboard(document.getElementById('copycssurl'));
         </script>
 

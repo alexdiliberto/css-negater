@@ -10,45 +10,52 @@
         <link rel="stylesheet" href="css/main.css">
     </head>
     <body>
-        <!--[if lte IE 8]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-        <!-- TODO: Improve this copy and replace the image. -->
-        <h1>CSS Negater</h1>
-        <iframe src="http://nodeknockout.com/iframe/ally" frameborder=0 scrolling=no allowtransparency=true width=115 height=25></iframe>
-        <p>When you wake up in cold sweats in the middle of the night because of this:</p>
-        <p><img src="img/typepadcss.jpg" alt="Theming form with just CSS." /></p>
+        <div class="container">
+            <!--[if lte IE 8]>
+                <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+            <![endif]-->
+            <!-- TODO: Improve this copy and replace the image. -->
+            <header class="clearfix">
+                <h1>CSS Negater</h1>
+                <iframe src="http://nodeknockout.com/iframe/ally" frameborder=0 scrolling=no allowtransparency=true width=115 height=25></iframe>
+            </header>
+            <p>When you wake up in cold sweats in the middle of the night because of this:</p>
+            <p><img src="img/typepadcss.jpg" alt="Theming form with just CSS." /></p>
 
-        <p>The CSS Negater has your back. Completely eliminate all included-by-default CSS with a negation stylesheet.</p>
+            <p>The CSS Negater has your back. Completely eliminate all included-by-default CSS with a negation stylesheet.</p>
 
-        <h2>Let's do it!</h2>
-        <form id="parse" action="parse.html" method="get" target="output"><div>
-            <label for="url">Page to negate: <input type="url" name="url" id="url" placeholder="eg. http://www.google.com" /></label>
+            <h2>Let's do it!</h2>
+            <form id="parse" action="parse.html" method="get" target="output"><div>
+                <label for="url">Page to negate: <input type="url" name="url" id="url" placeholder="eg. http://www.google.com" /></label>
 
-            <ul>
-                <li><label for="displaynone"><input type="checkbox" id="displaynone"/> Don't reset display: none;</label></li>
-                <li><label for="visibilityhidden"><input type="checkbox" id="visibilityhidden"/> Don't reset visibility: hidden;</label></li>
-            </ul>
-            <input type="hidden" id="options" name ="options" />
-            <input type="submit" value="Negate!" />
-        </div></form>
+                <ul>
+                    <li><label for="displaynone"><input type="checkbox" id="displaynone"/> Don't reset display: none;</label></li>
+                    <li><label for="visibilityhidden"><input type="checkbox" id="visibilityhidden"/> Don't reset visibility: hidden;</label></li>
+                </ul>
+                <input type="hidden" id="options" name ="options" />
+                <input type="submit" value="Negate!" />
+            </div></form>
 
-        <h2>Bookmarklet!</h2>
-        <!--
-        <script>
-            (function() {
-                var elem = document.createElement('link');
-                elem.rel = 'stylesheet';
-                elem.href = 'http://ally.2013.nodeknockout.com/parse.css?url='+encodeURIComponent(location.href);
-                document.body.appendChild(elem);
-            })();
-        </script>
-        -->
-        <a href="javascript:(function(){var a=document.createElement('link');a.rel='stylesheet';a.href='http://ally.2013.nodeknockout.com/parse.css?url='+encodeURIComponent(location.href);document.body.appendChild(a)})();">One click negation!</a>
+            <h2>Bookmarklet</h2>
+            <p>Embed the "Negate CSS" to bookmarklet to quickly remove all styling from the page you're currently visiting.</p>
+            <!--
+            <script>
+                (function() {
+                    var elem = document.createElement('link');
+                    elem.rel = 'stylesheet';
+                    elem.href = 'http://ally.2013.nodeknockout.com/parse.css?url='+encodeURIComponent(location.href);
+                    document.body.appendChild(elem);
+                })();
+            </script>
+            -->
+            <a href="javascript:(function(){var a=document.createElement('link');a.rel='stylesheet';a.href='http://ally.2013.nodeknockout.com/parse.css?url='+encodeURIComponent(location.href);document.body.appendChild(a)})();">Negate CSS!</a>
 
-        <noscript><iframe id="output" name="output"></iframe></noscript>
+            <noscript><iframe id="output" name="output"></iframe></noscript>
 
-        <div id="iframe-target"></div>
+            <h2>Results</h2>
+            <div id="iframe-target"></div>
+
+        </div>
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>

@@ -7,7 +7,9 @@ $(function() {
 		sources = document.cookie.match(/previous=([^&]*)/)[1].split('~~~');
 	}
 	for (var i = 0; i < sources.length; i++) {
-		$('<iframe src="'+unescape(sources[i])+'&exclude=1"></iframe>').appendTo('#iframe-target');
+    // TODO: Add clear button.
+    // TODO: Add delete button.
+		$('<div class="result"><iframe scrolling="no" src="'+unescape(sources[i])+'&exclude=1"></iframe></div>').appendTo('#iframe-target');
 	}
 });
 
@@ -16,7 +18,7 @@ $('#parse').on('submit', function(e) {
   var url = $('#url').val();
   target++;
   this.target = "output"+target;
-  $('<iframe id="output'+target+'" name="output'+target+'"></iframe>').prependTo('#iframe-target');
+  $('<div class="result"><iframe scrolling="no" id="output'+target+'" name="output'+target+'"></iframe></div>').prependTo('#iframe-target');
   var options = $('input[type=checkbox]');
   var optionsArray = new Array(options.length);
   options.each(function(index, checkbox) {
