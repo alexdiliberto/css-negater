@@ -101,12 +101,14 @@ var routes = {
     var parsed = parse(negateurl, setoptions);
 
     // TODO: Parse the page title out of the provided URL.
+    var title = 'negated page title';
+
     if (contenttype == 'html') {
       res.statusCode = 200;
       res.setHeader('Set-Cookie', 'previous='+previousURLs.join('~~~'));
       res.setHeader('Content-Type', 'text/'+contenttype);
       res.end(templates.negate({
-        title: 'negated page title',
+        title: title,
         url: negateurl,
         thispage: hostname + req.url,
         cssurl: hostname + req.url.replace('parse.html', 'parse.css').replace('&exclude=1', ''),

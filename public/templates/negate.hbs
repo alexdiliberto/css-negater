@@ -14,7 +14,6 @@
         <!--[if lte IE 8]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-        <!-- TODO: Use the page's title instead of the URL. -->
         <h1>{{title}}</h1>
         <h2>{{url}}</h2>
 
@@ -42,9 +41,8 @@
         </script>
 
         <!-- TODO: Make "Copy" buttons work. -->
-        <!-- TODO: Make "Download" button work. -->
         <h2>Use It!</h2>
-        <button>Copy to Clipboard</button><button>Download File</button>
+        <button>Copy to Clipboard</button><a href="{{cssurl}}" download="negated.css">Download File</a>
         <label for="link">This page: <input id="link" type="text" value="{{thispage}}" /></label><button>Copy</button>
         <label for="css">CSS URL: <input id="css" type="text" value="{{cssurl}}" /></label><button>Copy</button>
 
