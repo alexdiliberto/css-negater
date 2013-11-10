@@ -5,6 +5,7 @@ var connect = require('connect'),
     http = require('http'),
     path = require('path'),
     fs = require('fs'),
+    url = require('url'),
     querystring = require('querystring'),
     handlebars = require('handlebars'),
     request = require('request'),
@@ -47,47 +48,55 @@ var templates = (function() {
 
 // REAL CODE GOES HERE
 
-function fetch(url) {
-  return new RSVP.promise(function(resolve, reject) {
-    request(url, function (error, res, body) {
-      if (error) reject(error);
-
-      res.body = body;
-      resolve(res);
-    });
-  });
-}
-
 function parse(targeturl, options) {
 
   var browser = new zombie();
 
-  browser.visit(targeturl)
-  .fin(function() {
+  var stylesheets = new RSVP.Promise(function(resolve, reject) {
     // FIXME: Stop assuming that the zombie recovers.
-  
+    browser.visit(targeturl).fin(function() {
+      resolve(browser);
+    })
+  });
+
+  return stylesheets.then(function(browser) {
     // Get the document title.
     var title = browser.text("title");
 
-    // Find every <link rel="stylesheet"> and <style> block, queue them in order.
+    // Find every <link rel="stylesheet"> and <style> block, keep them in order.
     var stylesheets = browser.queryAll("link[rel=stylesheet],style");
     
-    stylesheets.forEach(function(stylesheet) {
-
+    stylesheets = stylesheets.map(function(stylesheet) {
+      var result = {};
       if (stylesheet.tagName.toLowerCase() == 'link') {
-         console.log(stylesheet.href + stylesheet.media);
+        // Request all of the CSS that was included remotely.
+        return new RSVP.Promise(function(resolve, reject) {
+          request(url.resolve(browser.location.href, stylesheet.href), function (error, res, body) {
+            if (error) { reject(error); }
+
+            result.media = !!stylesheet.media ? stylesheet.media : undefined;
+            result.body = body;
+            resolve(result);
+          });
+        });
       } else {
-        console.log(stylesheet.innerHTML);
+        // Snag all of the CSS that was included locally, wrpa it in a promise for safekeeping.
+        return new RSVP.Promise(function(resolve, reject) {
+          result.media = undefined;
+          result.body = stylesheet.innerHTML;
+          resolve(result);
+        })
       }
     });
+
+    return RSVP.all(stylesheets);
+  }).then(function(stylesheets) {
+    // TODO: Print the list of options in a comment at the top of the output.
+    // TODO: Parse all of the CSS.
+    // TODO: Calculate the CSS needed to negate their CSS, taking into consideration the configuration.
+    stylesheets.forEach(function(stylesheet) {
+    });
   });
-
-
-  // TODO: Request all of the CSS that was included remotely.
-  // TODO: Parse all of the CSS.
-  // TODO: Calculate the CSS needed to negate their CSS, taking into consideration the configuration.
-  // TODO: Print the list of options in a comment at the top of the output.
-  return "Parsed CSS content.";
 }
 
 function parseBitmask(options) {
@@ -138,27 +147,33 @@ var routes = {
     }
 
     var setoptions = parseBitmask(options);
-    var parsed = parse(targeturl, setoptions);
 
-    var title = 'negated page title';
+    parse(targeturl, setoptions).then(function(results) {
+      // TODO: take the results of parsing and send them down the wire.
+    });
 
-    if (contenttype == 'html') {
-      res.statusCode = 200;
-      res.setHeader('Set-Cookie', 'previous='+previousURLs.join('~~~'));
-      res.setHeader('Content-Type', 'text/'+contenttype);
-      res.end(templates.negate({
-        title: title,
-        url: targeturl,
-        thispage: hostname + req.url,
-        cssurl: hostname + req.url.replace('parse.html', 'parse.css').replace('&exclude=1', ''),
-        output: parsed,
-        options: setoptions
-      }));
-    } else {
-      res.statusCode = 200;
-      res.setHeader('Content-Type', 'text/css');
-      res.end(parsed);
-    }
+    (function() {
+      // FIXME: Make sure the context is set correctly.
+      var title = 'negated page title';
+
+      if (contenttype == 'html') {
+        res.statusCode = 200;
+        res.setHeader('Set-Cookie', 'previous='+previousURLs.join('~~~'));
+        res.setHeader('Content-Type', 'text/'+contenttype);
+        res.end(templates.negate({
+          title: title,
+          url: targeturl,
+          thispage: hostname + req.url,
+          cssurl: hostname + req.url.replace('parse.html', 'parse.css').replace('&exclude=1', ''),
+          output: "FIXME: The CSS goes here.",
+          options: setoptions
+        }));
+      } else {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'text/css');
+        res.end("FIXME: The CSS goes here.");
+      }
+    })();
   },
   "400": function(req, res, next) {
     fs.readFile(path.join(__dirname,'public','400.html'), function (err, html) {
