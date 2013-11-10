@@ -52,20 +52,25 @@ function parse(targeturl, options) {
 
   var browser = new zombie();
 
-  var stylesheets = new RSVP.Promise(function(resolve, reject) {
+  var load = new RSVP.Promise(function(resolve, reject) {
     // FIXME: Stop assuming that the zombie recovers.
     browser.visit(targeturl).fin(function() {
-      resolve(browser);
+      resolve({
+        options: options,
+        browser: browser
+      });
     })
   });
 
-  return stylesheets.then(function(browser) {
-    // Get the document title.
-    var title = browser.text("title");
+  return load.then(function(previous) {
+
+    var options = previous.options;
+    var browser = previous.browser;
 
     // Find every <link rel="stylesheet"> and <style> block, keep them in order.
     var stylesheets = browser.queryAll("link[rel=stylesheet],style");
     
+    // Turn all of the stylesheets into promises.
     stylesheets = stylesheets.map(function(stylesheet) {
       var result = {};
       if (stylesheet.tagName.toLowerCase() == 'link') {
@@ -89,12 +94,25 @@ function parse(targeturl, options) {
       }
     });
 
-    return RSVP.all(stylesheets);
-  }).then(function(stylesheets) {
+    return RSVP.hash({
+      title: browser.text('title'),
+      options: options,
+      stylesheets: RSVP.all(stylesheets)
+    });
+  }).then(function(previous) {
+    var options = previous.options;
+
     // TODO: Print the list of options in a comment at the top of the output.
     // TODO: Parse all of the CSS.
     // TODO: Calculate the CSS needed to negate their CSS, taking into consideration the configuration.
-    stylesheets.forEach(function(stylesheet) {
+
+    previous.stylesheets.forEach(function(stylesheet) {
+    });
+
+    return RSVP.hash({
+      title: previous.title,
+      options: previous.options,
+      parsedcss: 'fixme'
     });
   });
 }
@@ -148,32 +166,31 @@ var routes = {
 
     var setoptions = parseBitmask(options);
 
-    parse(targeturl, setoptions).then(function(results) {
-      // TODO: take the results of parsing and send them down the wire.
-    });
-
-    (function() {
-      // FIXME: Make sure the context is set correctly.
-      var title = 'negated page title';
-
-      if (contenttype == 'html') {
-        res.statusCode = 200;
-        res.setHeader('Set-Cookie', 'previous='+previousURLs.join('~~~'));
-        res.setHeader('Content-Type', 'text/'+contenttype);
-        res.end(templates.negate({
-          title: title,
-          url: targeturl,
-          thispage: hostname + req.url,
-          cssurl: hostname + req.url.replace('parse.html', 'parse.css').replace('&exclude=1', ''),
-          output: "FIXME: The CSS goes here.",
-          options: setoptions
-        }));
-      } else {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'text/css');
-        res.end("FIXME: The CSS goes here.");
+    // Set scope.
+    var callback = (function() {
+      return function(results) {
+        if (contenttype == 'html') {
+          res.statusCode = 200;
+          res.setHeader('Set-Cookie', 'previous='+previousURLs.join('~~~'));
+          res.setHeader('Content-Type', 'text/'+contenttype);
+          res.end(templates.negate({
+            title: results.title,
+            url: targeturl,
+            thispage: hostname + req.url,
+            cssurl: hostname + req.url.replace('parse.html', 'parse.css').replace('&exclude=1', ''),
+            output: results.parsedcss,
+            options: results.options
+          }));
+        } else {
+          res.statusCode = 200;
+          res.setHeader('Content-Type', 'text/css');
+          res.end(results.parsedcss);
+        }
       }
     })();
+
+    parse(targeturl, setoptions).then(callback);
+
   },
   "400": function(req, res, next) {
     fs.readFile(path.join(__dirname,'public','400.html'), function (err, html) {
