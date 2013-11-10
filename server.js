@@ -107,10 +107,12 @@ function parse(targeturl, options) {
 
     var preamble = "";
     var parsedcss = "";
+    var keyOptions = [];
+    var englishOptions = [];
 
     if (options.length) {
-      var keyOptions = options.map(function(elem) { return elem.key; });
-      var englishOptions = options.map(function(elem) { return elem.value; });
+      keyOptions = options.map(function(elem) { return elem.key; });
+      englishOptions = options.map(function(elem) { return elem.value; });
     }
 
     preamble =  "/*\r\n";
@@ -123,8 +125,17 @@ function parse(targeturl, options) {
       interim.stylesheet.rules = interim.stylesheet.rules.map(function(rule) {
         rule.declarations = rule.declarations.map(function(declaration) {
           // TODO: Properly set media queries.
-          // TODO: Calculate the CSS needed to negate their CSS, taking into consideration the options.
-          declaration.value = "inherit";
+          // TODO: Calculate the minimum CSS needed to negate their CSS.
+
+          if (keyOptions.length && (
+              (~keyOptions.indexOf('display-none') && declaration.property == 'display' && declaration.value == 'none') || 
+              (~keyOptions.indexOf('visibility-hidden') && declaration.property == 'visibility' && declaration.value == 'hidden')
+          )) {
+            console.log('Skipping declaration.');
+          } else {
+            declaration.value = "inherit";
+          };
+
           return declaration;
         });
         return rule;
