@@ -40,20 +40,19 @@
         });
         </script>
 
-        <script type="text/javascript" src="js/vendor/ZeroClipboard.min.js"></script>
-        <script>
-            ZeroClipboard.setDefaults( { moviePath: 'js/vendor/ZeroClipboard.swf' } );
-            var clip1 = new ZeroClipboard(document.getElementById('copypageurl'));
-            var clip2 = new ZeroClipboard(document.getElementById('copypageurl'));
-            var clip3 = new ZeroClipboard(document.getElementById('copycssurl'));
-        </script>
-
-
         <!-- TODO: Make "Copy" buttons work. -->
         <h2>Use It!</h2>
         <button id="copycss" data-clipboard-target="output">Copy to Clipboard</button><a href="{{cssurl}}" download="negated.css">Download File</a>
         <label for="link">This page: <input id="link" type="text" value="{{thispage}}" /></label><button id="copypageurl" data-clipboard-target="link">Copy</button>
         <label for="css">CSS URL: <input id="css" type="text" value="{{cssurl}}" /></label><button id="copycssurl" data-clipboard-target="css">Copy</button>
+
+        <script type="text/javascript" src="js/vendor/ZeroClipboard.min.js"></script>
+        <script>
+            ZeroClipboard.setDefaults( { moviePath: 'js/vendor/ZeroClipboard.swf' } );
+            var clip1 = new ZeroClipboard(document.getElementById('copycss'));
+            var clip2 = new ZeroClipboard(document.getElementById('copypageurl'));
+            var clip3 = new ZeroClipboard(document.getElementById('copycssurl'));
+        </script>
 
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
