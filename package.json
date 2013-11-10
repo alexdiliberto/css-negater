@@ -16,6 +16,7 @@
     "rsvp": "2.0.*",
     "request": "2.27.*",
     "zombie": "2.0.0-alpha24",
+    "css": "1.4.4",
     "nko": "*"
   },
   "engines": {

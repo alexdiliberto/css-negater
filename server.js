@@ -10,6 +10,7 @@ var connect = require('connect'),
     handlebars = require('handlebars'),
     request = require('request'),
     zombie = require('zombie'),
+    css = require('css'),
     RSVP = require('rsvp');
 
 var isProduction = (process.env.NODE_ENV === 'production'),
@@ -104,9 +105,6 @@ function parse(targeturl, options) {
     var options = previous.options;
     var stylesheets = previous.stylesheets;
 
-    // TODO: Parse all of the CSS.
-    // TODO: Calculate the CSS needed to negate their CSS, taking into consideration the options.
-
     var preamble = "";
     var parsedcss = "";
 
@@ -121,7 +119,17 @@ function parse(targeturl, options) {
     preamble += "\r\n*/\r\n";
 
     stylesheets.forEach(function(stylesheet) {
-      parsedcss += stylesheet.body+"\r\n";
+      var interim = css.parse(stylesheet.body);
+      interim.stylesheet.rules = interim.stylesheet.rules.map(function(rule) {
+        rule.declarations = rule.declarations.map(function(declaration) {
+          // TODO: Calculate the CSS needed to negate their CSS, taking into consideration the options.
+          declaration.value = "inherit";
+          return declaration;
+        });
+        return rule;
+      });
+
+      parsedcss += css.stringify(interim, { compress: true })+"\r\n";
     });
 
     return RSVP.hash({
