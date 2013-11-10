@@ -12,15 +12,12 @@ var isProduction = (process.env.NODE_ENV === 'production'),
     hostname = isProduction ? 'http://ally.2013.nodeknockout.com' : 'http://localhost:8000',
     port = (isProduction ? 80 : 8000);
 
-var optsBinaryLength = 2,
-  opts = [
+var opts = [
   {
     key: "display-none",
-    set: false,
     value: "Don't reset display: none;"
   }, {
     key: "visibility-hidden",
-    set: false,
     value: "Don't reset visibility: hidden;"
   }
 ];
@@ -52,13 +49,17 @@ function parse(url, options) {
 }
 
 function parseBitmask(options) {
+  var setOpts = [];
+
   if (!options) return undefined;
 
-  for (var i = 0; i < optsBinaryLength; i++) {
-    opts[i].set = bitTest(options, i);
+  for (var i = opts.length-1; i >= 0; i--) {
+    if(bitTest(options, i)) {
+      setOpts.push(opts[opts.length-1-i]);
+    }
   }
 
-  return opts;
+  return setOpts;
 }
 
 function bitTest(num, bit) {
