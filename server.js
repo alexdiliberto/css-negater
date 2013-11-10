@@ -98,7 +98,8 @@ var routes = {
       previousURLs = previousURLs.filter(function (value, index, self) { return self.indexOf(value) === index; });
     }
 
-    var parsed = parse(negateurl, parseBitmask(options));
+    var setoptions = parseBitmask(options);
+    var parsed = parse(negateurl, setoptions);
 
     // TODO: Include options mapped over their information in this.
     // TODO: Parse the page title out of the provided URL.
@@ -111,7 +112,8 @@ var routes = {
         url: negateurl,
         thispage: hostname + req.url,
         cssurl: hostname + req.url.replace('parse.html', 'parse.css').replace('&exclude=1', ''),
-        output: parsed
+        output: parsed,
+        options: setoptions
       }));
     } else {
       res.statusCode = 200;
