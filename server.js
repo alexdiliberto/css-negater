@@ -109,12 +109,14 @@ function parse(targeturl, options) {
     var preamble = "";
     var parsedcss = "";
 
-    var keyOptions = options.map(function(elem) { return elem.key; });
-    var englishOptions = options.map(function(elem) { return elem.value; });
+    if (options.length) {
+      var keyOptions = options.map(function(elem) { return elem.key; });
+      var englishOptions = options.map(function(elem) { return elem.value; });
+    }
 
     preamble =  "/*\r\n";
-    preamble += "URL: " + previous.targeturl + "\r\n\r\n";
-    preamble += "Options:\r\n- " + englishOptions.join("\r\n- ");
+    preamble += "URL: " + previous.targeturl;
+    if (options.length) preamble += "\r\n\r\nOptions:\r\n- " + englishOptions.join("\r\n- ");
     preamble += "\r\n*/";
 
     previous.stylesheets.forEach(function(stylesheet) {
