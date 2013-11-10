@@ -12,6 +12,7 @@ var isProduction = (process.env.NODE_ENV === 'production'),
     hostname = isProduction ? 'http://ally.2013.nodeknockout.com' : 'http://localhost:8000',
     port = (isProduction ? 80 : 8000);
 
+// TODO: Identify any reasonable options.
 var opts = [
   {
     key: "display-none",
@@ -83,9 +84,6 @@ var routes = {
       return;
     }
 
-    // TODO: Implement bitmasking for options.
-    // var options = parseBitmask(req.query.options);
-
     // Handle previously submitted URLs.
     var previousURLs = [];
     if (req.cookies.previous) {
@@ -102,7 +100,6 @@ var routes = {
     var setoptions = parseBitmask(options);
     var parsed = parse(negateurl, setoptions);
 
-    // TODO: Include options mapped over their information in this.
     // TODO: Parse the page title out of the provided URL.
     if (contenttype == 'html') {
       res.statusCode = 200;
